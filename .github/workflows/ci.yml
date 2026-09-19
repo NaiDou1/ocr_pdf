@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Windows / Python ${{ matrix.python-version }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Syntax check
+        run: python -m py_compile ocr_pdf.py tests/make_samples.py tests/verify_pdf.py
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow
+
+      - name: Generate sample photos
+        run: python tests/make_samples.py sample
+
+      - name: Generate the PDF
+        run: python ocr_pdf.py sample --show-rotation-scores
+
+      - name: Verify the PDF
+        run: python tests/verify_pdf.py sample/sample.pdf 4

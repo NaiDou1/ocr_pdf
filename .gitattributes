@@ -1,0 +1,19 @@
+# 默认按文本处理，仓库内统一存 LF
+* text=auto
+
+# .bat 必须是 CRLF，否则 cmd.exe 解析会出错（会吞掉每行开头字符）
+*.bat text eol=crlf
+
+# Python / Markdown / YAML 用 LF
+*.py   text eol=lf
+*.md   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.txt  text eol=lf
+
+# 二进制文件不做换行转换
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.pdf  binary
+*.ico  binary
